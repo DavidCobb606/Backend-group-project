@@ -1,43 +1,49 @@
-const express = require("express")
+const express = require("express");
 
-const app=express()
+const app = express();
 
-const {PythonShell} = require("python-shell")
+const { PythonShell } = require("python-shell");
 
-const pyshell = new PythonShell("./Model/model.ipynb")
+const pyshell = new PythonShell("./Model/model.py");
 
-app.get("/", (req,res,next) => {
+app.get("/", (req, res, next) => {
+  //issue was to do with a module in ipynb file so copied code into .py file
+  // and think this sorted it. console.logs in js work and can send and
+  // receive data from python
 
-    let options = {
-        mode: "text",
-        pythonOptions: ["-u"], 
-            scriptPath: "./Model",
-        args: ["argument"]
-    };
+  //both methods work so we just have to decide which we prefer: define options
+  // with args key and send or send directly with .send
 
-  
-        
-    // PythonShell.run("model.ipynb", options, function (err, result){
+  //if nothing is coming back make sure it's the print is the last thing in the
+  //python script
 
-    //     if(err) throw err;
-    //     console.log("finished")
-    //     // console.log(result)
-    //  res.send(result.toString())
+  //method 1
+  pyshell.send("Trying this out");
+  pyshell.on("message", (message) => res.send(message));
 
-    // })
+  pyshell.end(function (err, code, signal) {
+    if (err) throw err;
+    console.log("finished");
+  });
 
+  //method 2
 
-})  
-pyshell.send("Hello")
-        
+  let options = {
+    mode: "text",
+    // pythonOptions: ["-u"],
+    // scriptPath: "./Model",
+    args: ["argument"],
+  };
+  PythonShell.run(
+    __dirname + "/Model/model.py",
+    options,
+    function (err, result) {
+      if (err) throw err;
+      console.log(result);
+      res.send(result);
+    }
+  );
+});
 
-    pyshell.on('message', function (message) {
-        // received a message sent from the Python script (a simple "print" statement)
-        console.log(message + "hey for the third time");
-      });
-
-
-    pyshell.end()
-
-const port=8000;
-app.listen(port, () => console.log(`server connected to ${port}`))
+const port = 8000;
+app.listen(port, () => console.log(`server connected to ${port}`));
