@@ -9,6 +9,6 @@
   },
   "scripts": {
     "start": "nodemon ./app.js",
-    "setup": "python3 ./Model/model.py"
+    "setup": "python3 ./Model/setup.py"
   }
 }
