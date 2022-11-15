@@ -6,14 +6,9 @@
     "nodemon": "^2.0.20",
     "python-shell": "^3.0.1",
     "supertest": "^6.3.1"
-    
+  },
+  "scripts": {
+    "start": "nodemon ./app.js",
+    "setup": "python3 ./Model/model.py"
   }
-
-  ,
-
-  "scripts":{
-    "start": "nodemon ./app.js"
-  } 
-
-  
 }
