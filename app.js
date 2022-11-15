@@ -1,12 +1,17 @@
 const express = require("express");
-
+const fs = require("fs/promises");
 const app = express();
 
 const { PythonShell } = require("python-shell");
 
-const pyshell = new PythonShell("./Model/model.py");
+const pyshell = new PythonShell("./Model/model.py", { mode: "json" });
 
-app.get("/", (req, res, next) => {
+let model = [];
+app.use(express.json());
+app.post("/", (req, res, next) => {
+  const {
+    body: { positive, negative },
+  } = req;
   //issue was to do with a module in ipynb file so copied code into .py file
   // and think this sorted it. console.logs in js work and can send and
   // receive data from python
@@ -18,32 +23,34 @@ app.get("/", (req, res, next) => {
   //python script
 
   //method 1
-  pyshell.send("Trying this out");
-  pyshell.on("message", (message) => res.send(message));
 
-  pyshell.end(function (err, code, signal) {
-    if (err) throw err;
-    console.log("finished");
-  });
+  // pyshell.send({ positive: ["king", "woman"], negative: ["man"] });
+  // pyshell.on("message", (message) => res.send(message));
+
+  // // pyshell.end(function (err, code, signal) {
+  // //   if (err) throw err;
+  // //   console.log("finished");
+  // // });
 
   //method 2
 
   let options = {
-    mode: "text",
+    mode: "json",
     // pythonOptions: ["-u"],
     // scriptPath: "./Model",
-    args: ["argument"],
+    args: [positive, negative],
   };
   PythonShell.run(
     __dirname + "/Model/model.py",
     options,
-    function (err, result) {
+    function (err, [newKeyWords]) {
       if (err) throw err;
-      console.log(result);
-      res.send(result);
+      res.send({ newKeyWords });
     }
   );
 });
 
 const port = 8000;
-app.listen(port, () => console.log(`server connected to ${port}`));
+app.listen(port, () => {
+  return console.log(`server connected to ${port}`);
+});
