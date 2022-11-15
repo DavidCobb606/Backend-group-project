@@ -9,6 +9,7 @@
   },
   "scripts": {
     "start": "nodemon ./app.js",
-    "setup": "python3 ./Model/setup.py"
+    "setup": "python3 ./Model/setup.py",
+    "test": "jest 0--watch"
   }
 }
