@@ -8,6 +8,10 @@ const { postWords, addWords } = require("./controllers");
 let model = [];
 app.use(express.json());
 
+app.get("/", (req, res) => {
+  res.send("Hello");
+});
+
 app.post("/api/model", postWords);
 
 app.all("/*", (req, res) => {
