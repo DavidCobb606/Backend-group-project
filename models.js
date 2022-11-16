@@ -6,6 +6,7 @@ const pyshell = new PythonShell("./Model/model.py", { mode: "json" });
 
 exports.addWords = (body) => {
 
+  
     const {positive, negative} = body
   
     
@@ -30,13 +31,9 @@ exports.addWords = (body) => {
                 __dirname + "/Model/model.py",
                 options,
                 function (err, [newKeyWords]) {
-                console.log("2")
-                console.log(newKeyWords + " model")
-          
-                return resolve(newKeyWords) 
-            
-        })
-        
+                 
+                  return resolve(newKeyWords)    
+                })        
         }
         catch{
             console.log("error running python code")

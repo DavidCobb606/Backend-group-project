@@ -7,6 +7,7 @@ import json
 
 model = KeyedVectors.load_word2vec_format(
 os.path.abspath("glove.6B.50d.txt"), binary=False, no_header=True)
+
 model.save_word2vec_format('modelTest.txt', binary=False)
 
 

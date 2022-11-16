@@ -13,10 +13,11 @@ testArgTwo = sys.argv[2].split(',')
 
 
 def findKeyWords ():
-    result = model.most_similar(positive=testArgOne, negative=testArgTwo, topn=2)
-
-    return result
-
+    try:
+        result = model.most_similar(positive=testArgOne, negative=testArgTwo, topn=2)
+        return result
+    except:
+        return "404"
 
 
 print(json.dumps(findKeyWords()))
