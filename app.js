@@ -12,7 +12,7 @@ app.get("/", (req, res) => {
   res.send("Hello");
 });
 
-//app.post("/api/model", postWords);
+app.post("/api/model", postWords);
 
 app.all("/*", (req, res) => {
   res.status(404).send({ msg: "Route not found" });
