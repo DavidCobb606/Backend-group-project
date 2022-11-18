@@ -1,71 +1,64 @@
-const request = require("supertest")
-const app = require("../app.js")
-
-jest.setTimeout(40000)
-
-describe("POST /api/model", () => {
-    test("Returns a 200 status and an array with 2 similar words when you input 1 positive and negative input ", () => {
-        return request(app)
-        .post("/api/model")
-        .send({positive: ["king"], negative: ["peasant"]})
-        .then(({body}) => {           
-            expect(200)
-            expect(body.length).toEqual(2)        
-        })
-    })
-    test ("Returns a 200 status and an array with 2 similar words when you input any amount of positive words and at least 1 negative word.", () => {
-        return request(app)
-        .post("/api/model")
-        .send({positive: ["king", "queen", "royal", "kingdom", "boy", "prince", "lord", "country"], negative: ["poor", "serf"]})
-        .expect(200)
-        .then(({body}) => {
-            
-            expect(body.length).toEqual(2)
-        })
-    })
-    test("Return a 400 error if the arrays are empty", () => {
-        return request(app)
-        .post("/api/model")
-        .send({positive: [], negative: []})
-        .expect(400)
-        .then(({body}) => {
-            
-            expect(body.msg).toBe("Invalid input. Please make sure there is at least 1 word for both positive and negative.")   
-
-        })
-    })
-
-    test("Return a 400 error if the positive array is empty", () => {
-        return request(app)
-        .post("/api/model")
-        .send({positive: [], negative: ["king"]})
-        .expect(400)
-        .then(({body}) => {
-            
-            expect(body.msg).toBe("Invalid input. Please make sure there is at least 1 word for both positive and negative.")
-        })
-    })
-
-    test("Return a 400 error if the positive array is empty", () => {
-        return request(app)
-        .post("/api/model")
-        .send({positive: ["king"], negative: []}) 
-        .expect(400)
-        .then(({body}) => {
-           
-            expect(body.msg).toBe("Invalid input. Please make sure there is at least 1 word for both positive and negative.")
-        })
-    })  
-
-    test("Returns a 404 error if the word doesn't exist", () => {
-        return request(app)
-        .post("/api/model")
-        .send({positive: ["Manchester"], negative: ["afasdflk"]})
-        .expect(404)
-        .then(({body})=>{
-            
-            expect(body.msg).toBe("One of the words in either positive or negative array does not exist in the data set. Please try a different word.")
-
-        })
-    })
-})
+const request = require("supertest");
+const app = require("../app.js");
+describe("Error handling", () => {
+  test("404: responds with an error when passed a non existant end point", () => {
+    return request(app)
+      .get("/api/non-existant")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Route not found");
+      });
+  });
+});
+describe("GET /api/ebayCall", () => {
+  test("return status 200 when successful", () => {
+    return request(app)
+      .get("/api/ebayCall")
+      .expect(200);
+  });
+  test("return an object containing an item relating to one specified keyword", () => {
+    return request(app)
+      .get("/api/ebayCall?keyword=drone")
+      .then(({ body }) => {
+        const itemsArray = body.items;
+        itemsArray.forEach(item => {
+          expect.objectContaining({
+            itemId: expect.any(String),
+            title: expect.any(String),
+            categories: expect.any(Array),
+            image: expect.any(Object),
+            price: expect.any(Object),
+            thumbnailImages: expect.any(Array),
+            shippingOptions: expect.any(Array),
+            buyingOptions: expect.any(Array),
+            itemWebUrl: expect.any(String),
+            additionalImages: expect.any(Array),
+            adultOnly: expect.any(Boolean)
+          });
+        });
+      });
+  });
+  test("return an object containing an item relating to multiple specified keyword", () => {
+    return request(app)
+      .get("/api/ebayCall?keyword=gift electronics -card -cards")
+      .then(({ body }) => {
+        console.log(body);
+        const itemsArray = body.items;
+        itemsArray.forEach(item => {
+          expect.objectContaining({
+            itemId: expect.any(String),
+            title: expect.any(String),
+            categories: expect.any(Array),
+            image: expect.any(Object),
+            price: expect.any(Object),
+            thumbnailImages: expect.any(Array),
+            shippingOptions: expect.any(Array),
+            buyingOptions: expect.any(Array),
+            itemWebUrl: expect.any(String),
+            additionalImages: expect.any(Array),
+            adultOnly: expect.any(Boolean)
+          });
+        });
+      });
+  });
+});
