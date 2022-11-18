@@ -12,7 +12,7 @@ app.get("/", (req, res) => {
   res.send("Hello");
 });
 
-app.post("/api/model", postWords);
+app.get("/api/ebayCall", getEbayItems)
 
 app.all("/*", (req, res) => {
   res.status(404).send({ msg: "Route not found" });
